@@ -54,6 +54,13 @@ class _ListPageState extends State<ListPage> {
     });
   }
 
+  void finishWorkout() {
+    double progress = workouts.isEmpty
+        ? 0
+        : completedIndexes.length / workouts.length;
+    Navigator.pop(context, progress); 
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,6 +106,25 @@ class _ListPageState extends State<ListPage> {
                   ),
                 );
               },
+            ),
+          ),
+
+          Container(
+            padding: const EdgeInsets.all(20),
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: finishWorkout,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              child: const Text(
+                "Finish Workout",
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
             ),
           ),
         ],

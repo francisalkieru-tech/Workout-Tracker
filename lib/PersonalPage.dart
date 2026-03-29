@@ -95,8 +95,8 @@ class _Personalize extends State<Personalize> {
                     const SizedBox(height: 10),
                     Align(
                       alignment: Alignment(0.2, 0),
-                      child: buildPillButton("Advanced", selectedLevel == "Advanced", () {
-                        setState(() => selectedLevel = "Advanced");
+                      child: buildPillButton("Advance", selectedLevel == "Advance", () {
+                        setState(() => selectedLevel = "Advance");
                       }),
                     ),
                   ],
