@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Listpage.dart';
+import 'listpage.dart';
 
 class Homepage extends StatefulWidget { 
   final String level;
@@ -20,7 +20,6 @@ class _HomepageState extends State<Homepage> {
 
   final List<String> session = ["Push Day", "Pull Day", "Leg Day", "Core Day"];
 
-  // Map to store completion percentage for each session
   Map<String, double> progress = {
     "Push Day": 0,
     "Pull Day": 0,
@@ -29,7 +28,6 @@ class _HomepageState extends State<Homepage> {
   };
 
   final Map<String, dynamic> workoutData = {
-    // ... your workoutData map ...
   };
 
   List<String> getWorkout(String sessionName) {
@@ -52,7 +50,6 @@ class _HomepageState extends State<Homepage> {
                   color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold)),
           GestureDetector(
             onTap: () async {
-              // Go to ListPage and wait for the progress result
               final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -63,7 +60,6 @@ class _HomepageState extends State<Homepage> {
                 ),
               );
 
-              // result is expected to be a double between 0 and 1
               if (result != null && result is double) {
                 setState(() {
                   progress[title] = result;
@@ -84,7 +80,6 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  // Dashboard below the list
   Widget dashboard() {
     return Container(
       margin: const EdgeInsets.only(top: 20),
@@ -170,7 +165,7 @@ class _HomepageState extends State<Homepage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Workout List + Dashboard
+
                   Expanded(
                     child: ListView(
                       children: [

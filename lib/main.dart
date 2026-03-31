@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'Frontpage.dart';
-import 'PersonalPage.dart';
+import 'frontpage.dart';
+import 'personalPage.dart';
 
 void main() {
   runApp(const ExerciseApp());
