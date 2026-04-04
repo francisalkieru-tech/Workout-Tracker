@@ -72,7 +72,7 @@ class _HomepageState extends State<Homepage> {
                 color: Colors.black54,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.add, color: Colors.white),
+              child: const Icon(Icons.add, color: Color.fromARGB(255, 0, 255, 255)),
             ),
           )
         ],
@@ -93,7 +93,7 @@ class _HomepageState extends State<Homepage> {
         children: [
           const Text(
             "Today's Progress",
-            style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Color.fromARGB(255, 0, 229, 255), fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 15),
           ...session.map((s) {
@@ -130,7 +130,7 @@ class _HomepageState extends State<Homepage> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/bg.jpg"),
+                image: AssetImage("assets/64d8e4a09654aded67cf7975db1e1eda.jpg"),
                 fit: BoxFit.cover,
               ),
             ),
@@ -150,8 +150,7 @@ class _HomepageState extends State<Homepage> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.access_time, color: Colors.white, size: 70),
-                        const SizedBox(width: 20),
+                        Image.asset("assets/12155872.png", width: 70, height: 70,),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -178,17 +177,6 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: (index) => setState(() => currentIndex = index),
-        backgroundColor: Colors.black,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.blue,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.fitness_center), label: "Workout"),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: "List"),
         ],
       ),
     );
