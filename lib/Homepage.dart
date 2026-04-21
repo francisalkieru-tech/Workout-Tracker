@@ -16,8 +16,6 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  int currentIndex = 0;
-
   final List<String> session = ["Push Day", "Pull Day", "Leg Day", "Core Day"];
 
   Map<String, double> progress = {
@@ -112,13 +110,203 @@ class _HomepageState extends State<Homepage> {
         ],
       },
     },
+
+    "Intermediate" : {
+      "Lose Weight" : {
+        "Push Day": [
+          "Push-Ups, 4 sets of 12-15 reps",
+          "Incline Push-Ups, 4 sets of 12 reps",
+          "Bench Dips or Chair Dips, 3 sets of 20 reps",
+          "Shoulder Taps, 4 sets of 24 reps",
+          "Burpees, 3 sets of 12 reps"
+        ],
+        "Pull Day": [
+          "Superman Hold, 4 sets of 30 secs",
+          "Back Extensions, 4 sets of 15 reps",
+          "Reverse Snow Angels, 4 sets of 12 reps",
+          "Prone Y Raises, 4 sets of 12 reps",
+          "Jump Rope or Jumping Jacks, 3 sets of 1 min"
+        ],
+        "Leg Day": [
+          "Squats, 4 sets of 20 reps",
+          "Lunges, 4 sets of 12 each leg",
+          "Jump Squats, 3 sets of 12 reps",
+          "Wall Sit, 4 sets of 45 secs",
+          "Calf Raises, 4 sets of 20 reps"
+        ],
+
+        "Core Day": [
+          "Plank, 4 sets of 45 secs",
+          "Mountain Climbers, 4 sets of 40 secs",
+          "Crunches, 4 sets of 15 reps",
+          "Leg Raises, 4 sets of 12 reps",
+          "Russian Twists, 4 sets of 20 each side"
+        ],
+      }, 
+      "Gain Muscle": {
+        "Push Day": [
+          "Push-Ups, 4 sets of 15 reps",
+          "Decline Push-Ups, 4 sets of 10 reps",
+          "Bench Dips (or Chair Dips), 4 sets of 12 reps",
+          "Pike Push-Ups, 4 sets of 10 reps",
+          "Shoulder Taps, 4 sets of 20 reps",
+        ],
+
+        "Pull Day": [
+          "Superman Hold, 4 sets of 30 secs",
+          "Back Extensions, 4 sets of 15 reps",
+          "Reverse Snow Angels, 4 sets of 12 reps",
+          "Prone T Raises, 4 sets of 12 reps",
+          "Dead Hang (if available), 4 sets of 20 secs",
+        ],
+
+        "Leg Day": [
+          "Squats, 4 sets of 20 reps",
+          "Lunges, 4 sets of 12 each leg",
+          "Bulgarian Split Squats, 3 sets of 10 each leg",
+          "Glute Bridges, 4 sets of 15 reps",
+          "Calf Raises, 4 sets of 20 reps",
+        ],
+        
+        "Core Day": [
+         "Plank, 4 sets of 45 secs",
+         "Crunches, 4 sets of 15 reps",
+         "Leg Raises, 4 sets of 12 reps",
+         "Heel Touches, 4 sets of 20 reps",
+         "Bicycle Crunches, 4 sets of 15 reps",
+        ],
+      },
+
+      "Stay Fit": {
+        "Push Day": [
+          "Push-Ups, 4 sets of 12 reps",
+          "Incline Push-Ups, 4 sets of 12 reps",
+          "Bench Dips, 3 sets of 10 reps",
+          "Shoulder Taps, 4 sets of 20 reps",
+          "Arm Circles, 3 sets of 45 secs",
+        ],
+        "Pull Day": [
+          "Superman Hold, 4 sets of 25 secs",
+          "Back Extensions, 4 sets of 12 reps",
+          "Reverse Snow Angels, 4 sets of 12 reps",
+          "Prone Y Raises, 4 sets of 12 reps",
+          "Jumping Jacks, 3 sets of 1 min",
+        ],
+        "Leg Day": [
+          "Squats, 4 sets of 15 reps",
+          "Lunges, 4 sets of 10 each leg",
+          "Step-Ups (Chair), 3 sets of 10 each leg",
+          "Wall Sit, 4 sets of 40 secs",
+          "Calf Raises, 4 sets of 18 reps",
+        ],
+        "Core Day": [
+          "Plank, 4 sets of 40 secs",
+          "Crunches, 4 sets of 15 reps",
+          "Leg Raises, 4 sets of 12 reps",
+          "Russian Twists, 4 sets of 15 each side",
+          "Mountain Climbers, 3 sets of 30 secs",
+        ],
+      },
+    },
+    "Advance": {
+      "Lose Weight": {
+        "Push Day": [
+          "Decline Push-Ups, 5 sets of 15 reps",
+          "Diamond Push-Ups, 5 sets of 12 reps",
+          "Bench Dips, 5 sets of 12 reps",
+          "Shoulder Taps, 5 sets of 30 reps",
+          "Burpees, 4 sets of 15 reps",
+        ],
+        "Pull Day": [
+          "Superman Hold, 5 sets of 40 secs",
+          "Back Extensions, 5 sets of 20 reps",
+          "Reverse Snow Angels, 5 sets of 15 reps",
+          "Prone T Raises, 5 sets of 15 reps",
+          "Jump Rope (or Jumping Jacks), 4 sets of 1 min",
+        ],
+        "Leg Day": [
+          "Squats, 5 sets of 25 reps",
+          "Lunges, 5 sets of 15 each leg",
+          "Jump Squats, 4 sets of 15 reps",
+          "Wall Sit, 5 sets of 60 secs",
+          "Calf Raises, 5 sets of 25 reps",
+        ],
+        "Core Day": [
+          "Plank, 5 sets of 60 secs",
+          "Mountain Climbers, 5 sets of 45 secs",
+          "Leg Raises, 5 sets of 15 reps",
+          "Russian Twists, 5 sets of 25 each side",
+          "Bicycle Crunches, 5 sets of 20 reps",
+        ],
+      },
+      "Gain Muscle": {
+        "Push Day": [
+          "Decline Push-Ups, 5 sets of 15 reps",
+          "Diamond Push-Ups, 5 sets of 12 reps",
+          "Pike Push-Ups, 5 sets of 12 reps",
+          "Archer Push-Ups, 4 sets of 10 reps",
+          "Bench Dips, 5 sets of 15 reps",
+        ],
+        "Pull Day": [
+          "Superman Hold, 5 sets of 40 secs",
+          "Back Extensions, 5 sets of 20 reps",
+          "Reverse Snow Angels, 5 sets of 15 reps",
+          "Prone Y Raises, 5 sets of 15 reps",
+          "Dead Hang (if available), 5 sets of 30 secs",
+        ],
+        "Leg Day": [
+          "Squats, 5 sets of 25 reps",
+          "Bulgarian Split Squats, 4 sets of 12 each leg",
+          "Jump Squats, 4 sets of 15 reps",
+          "Glute Bridges, 5 sets of 20 reps",
+          "Calf Raises, 5 sets of 25 reps",
+        ],
+        "Core Day": [
+          "Plank, 5 sets of 60 secs",
+          "Hanging Knee Raises (if possible), 4 sets of 12 reps",
+          "Russian Twists, 5 sets of 25 each side",
+          "Heel Touches, 5 sets of 25 reps",
+          "Bicycle Crunches, 5 sets of 20 reps",
+        ],
+      },
+      "Stay Fit": {
+        "Push Day": [
+          "Push-Ups, 5 sets of 15 reps",
+           "Incline Push-Ups, 5 sets of 15 reps",
+          "Pike Push-Ups, 4 sets of 10 reps",
+          "Bench Dips, 4 sets of 12 reps",
+          "Shoulder Taps, 5 sets of 25 reps",
+        ],
+        "Pull Day": [
+          "Superman Hold, 5 sets of 35 secs",
+          "Back Extensions, 5 sets of 15 reps",
+          "Reverse Snow Angels, 5 sets of 15 reps",
+          "Prone T Raises, 5 sets of 15 reps",
+          "Jumping Jacks, 4 sets of 1 min",
+        ],
+        "Leg Day": [
+          "Squats, 5 sets of 20 reps",
+          "Lunges, 5 sets of 15 each leg",
+          "Step-Ups (Chair), 4 sets of 12 each leg",
+          "Wall Sit, 5 sets of 60 secs",
+          "Calf Raises, 5 sets of 25 reps",
+        ],
+        "Core Day": [
+          "Plank, 5 sets of 60 secs",
+          "Crunches, 5 sets of 20 reps",
+          "Leg Raises, 5 sets of 15 reps",
+          "Russian Twists, 5 sets of 20 each side",
+          "Mountain Climbers, 4 sets of 40 secs",
+        ],
+      },
+    },
   };
 
   List<String> getWorkout(String sessionName) {
     if (sessionName == "Rest") {
       return ["Rest Day - Make some rest"];
     }
-    return workoutData[widget.level]?[widget.goal]?[sessionName] ?? ["No Data"];
+    return workoutData[widget.level]?[widget.goal]?[sessionName] as List<String>? ?? ["No Data"];
   }
 
   Widget workoutCard(String title) {
