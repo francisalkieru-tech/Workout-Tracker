@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'userlog.dart';
 
 class FrontPage extends StatelessWidget {
   const FrontPage({super.key});
@@ -71,7 +72,9 @@ class FrontPage extends StatelessWidget {
                       elevation: 5,
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/Personal');
+                      Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const UserLog()),
+                      );
                     },
                     child: Ink(
                       decoration: const BoxDecoration(
