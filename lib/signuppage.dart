@@ -211,7 +211,7 @@ class _SignupPageState extends State<SignupPage> {
                               onPressed: isLoading ? null : signup,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                foregroundColor: const Color(0xFF0D2A66),
+                                foregroundColor: const Color.fromARGB(255, 0, 225, 255),
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 15),
                                 shape: RoundedRectangleBorder(
@@ -224,7 +224,7 @@ class _SignupPageState extends State<SignupPage> {
                                       width: 20,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: Color(0xFF0D2A66),
+                                        color: Color.fromARGB(255, 0, 242, 255),
                                       ),
                                     )
                                   : const Text(

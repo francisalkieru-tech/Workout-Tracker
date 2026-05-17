@@ -58,22 +58,13 @@ class _HomepageState extends State<Homepage> {
 
   List<Map<String, dynamic>> getWorkout(String sessionName) {
     final goalData = workoutData[widget.goal];
-    if (goalData is! Map)
-      return [
-        {"exercise": "Invalid Goal", "value": ""}
-      ];
+    if (goalData is! Map) return [{"exercise": "Invalid Goal", "value": ""}];
 
     final levelData = goalData[widget.level];
-    if (levelData is! Map)
-      return [
-        {"exercise": "Invalid Level", "value": ""}
-      ];
+    if (levelData is! Map) return [{"exercise": "Invalid Level", "value": ""}];
 
     final sessionData = levelData[sessionName];
-    if (sessionData is! List)
-      return [
-        {"exercise": "Rest Day", "value": "Take rest"}
-      ];
+    if (sessionData is! List) return [{"exercise": "Rest Day", "value": "Take rest"}];
 
     return sessionData.map((e) => Map<String, dynamic>.from(e)).toList();
   }
@@ -90,8 +81,7 @@ class _HomepageState extends State<Homepage> {
 
   String getWeekId() {
     final now = DateTime.now();
-    final weekOfYear =
-        ((now.difference(DateTime(now.year, 1, 1)).inDays) / 7).floor();
+    final weekOfYear = ((now.difference(DateTime(now.year, 1, 1)).inDays) / 7).floor();
     return "${now.year}-W$weekOfYear";
   }
 
@@ -150,6 +140,13 @@ class _HomepageState extends State<Homepage> {
         .collection('workouts')
         .doc(dateKey)
         .set({"date": Timestamp.now()});
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .update({
+          'total_workouts': FieldValue.increment(1),
+        });
   }
 
   Widget workoutCard(String title) {
@@ -179,7 +176,7 @@ class _HomepageState extends State<Homepage> {
                   builder: (context) => ListPage(
                     title: title,
                     exercises: getWorkout(title),
-                    suggested: getSuggestedWorkout(),
+                    suggested: getSuggestedWorkout(), // ✅ passed correctly
                   ),
                 ),
               );
@@ -189,7 +186,7 @@ class _HomepageState extends State<Homepage> {
                   progress[title] = result;
                 });
                 await saveProgress(title, result);
-                await logWorkout();
+                if (result > 0) await logWorkout();
               }
             },
             child: Container(
@@ -266,8 +263,7 @@ class _HomepageState extends State<Homepage> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image:
-                    AssetImage("assets/64d8e4a09654aded67cf7975db1e1eda.jpg"),
+                image: AssetImage("assets/64d8e4a09654aded67cf7975db1e1eda.jpg"),
                 fit: BoxFit.cover,
               ),
             ),
@@ -286,8 +282,7 @@ class _HomepageState extends State<Homepage> {
                     ),
                     child: Row(
                       children: [
-                        Image.asset("assets/12155872.png",
-                            width: 70, height: 70),
+                        Image.asset("assets/12155872.png", width: 70, height: 70),
                         const SizedBox(width: 15),
                         Expanded(
                           child: Column(
