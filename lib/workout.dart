@@ -43,7 +43,6 @@ final Map<String, dynamic> workoutData = {
         {"exercise": "Mountain Climbers", "value": "20 sec"},
       ],
     },
-
     "Intermediate": {
       "Push Day": [
         {"exercise": "Push-Ups", "value": "15 reps"},
@@ -66,7 +65,6 @@ final Map<String, dynamic> workoutData = {
         {"exercise": "Plank", "value": "45 sec"},
       ],
     },
-
     "Advanced": {
       "Push Day": [
         {"exercise": "Diamond Push-Ups", "value": "20 reps"},
@@ -90,7 +88,6 @@ final Map<String, dynamic> workoutData = {
       ],
     },
   },
-
   "build-muscle": {
     "Beginner": {
       "Push Day": [
@@ -114,7 +111,6 @@ final Map<String, dynamic> workoutData = {
         {"exercise": "Bird Dogs", "value": "12 reps"},
       ],
     },
-
     "Intermediate": {
       "Push Day": [
         {"exercise": "Bench Press", "value": "10 reps"},
@@ -137,7 +133,6 @@ final Map<String, dynamic> workoutData = {
         {"exercise": "Side Plank", "value": "30 sec"},
       ],
     },
-
     "Advanced": {
       "Push Day": [
         {"exercise": "Incline Bench Press", "value": "10 reps"},
@@ -161,147 +156,140 @@ final Map<String, dynamic> workoutData = {
       ],
     },
   },
-
   "cardio-health": {
-  "Beginner": {
-    "Push Day": [
-      {"exercise": "Shadow Boxing", "value": "1 min"},
-      {"exercise": "Wall Push-Ups", "value": "12 reps"},
-      {"exercise": "Arm Circles", "value": "30 sec"},
-    ],
-    "Pull Day": [
-      {"exercise": "Light Resistance Band Rows", "value": "12 reps"},
-      {"exercise": "Superman Hold", "value": "20 sec"},
-      {"exercise": "Jump Rope (Light)", "value": "1 min"},
-    ],
-    "Leg Day": [
-      {"exercise": "Bodyweight Squats", "value": "15 reps"},
-      {"exercise": "Step-Ups", "value": "12 reps"},
-      {"exercise": "Calf Raises", "value": "20 reps"},
-    ],
-    "Core Day": [
-      {"exercise": "March in Place", "value": "1 min"},
-      {"exercise": "Toe Taps", "value": "20 reps"},
-      {"exercise": "Plank", "value": "20 sec"},
-    ],
+    "Beginner": {
+      "Push Day": [
+        {"exercise": "Shadow Boxing", "value": "1 min"},
+        {"exercise": "Wall Push-Ups", "value": "12 reps"},
+        {"exercise": "Arm Circles", "value": "30 sec"},
+      ],
+      "Pull Day": [
+        {"exercise": "Light Resistance Band Rows", "value": "12 reps"},
+        {"exercise": "Superman Hold", "value": "20 sec"},
+        {"exercise": "Jump Rope (Light)", "value": "1 min"},
+      ],
+      "Leg Day": [
+        {"exercise": "Bodyweight Squats", "value": "15 reps"},
+        {"exercise": "Step-Ups", "value": "12 reps"},
+        {"exercise": "Calf Raises", "value": "20 reps"},
+      ],
+      "Core Day": [
+        {"exercise": "March in Place", "value": "1 min"},
+        {"exercise": "Toe Taps", "value": "20 reps"},
+        {"exercise": "Plank", "value": "20 sec"},
+      ],
+    },
+    "Intermediate": {
+      "Push Day": [
+        {"exercise": "Battle Rope Waves", "value": "30 sec"},
+        {"exercise": "Push-Ups", "value": "15 reps"},
+        {"exercise": "Dumbbell Punches", "value": "30 sec"},
+      ],
+      "Pull Day": [
+        {"exercise": "Jump Rope", "value": "3 mins"},
+        {"exercise": "Bent Over Rows", "value": "12 reps"},
+        {"exercise": "Resistance Band Pulls", "value": "15 reps"},
+      ],
+      "Leg Day": [
+        {"exercise": "Jump Lunges", "value": "12 reps"},
+        {"exercise": "Box Step-Ups", "value": "15 reps"},
+        {"exercise": "Wall Sit", "value": "45 sec"},
+      ],
+      "Core Day": [
+        {"exercise": "Bicycle Crunches", "value": "20 reps"},
+        {"exercise": "Plank Jacks", "value": "20 reps"},
+        {"exercise": "Mountain Climbers", "value": "30 sec"},
+      ],
+    },
+    "Advanced": {
+      "Push Day": [
+        {"exercise": "Plyo Push-Ups", "value": "15 reps"},
+        {"exercise": "Battle Rope Slams", "value": "45 sec"},
+        {"exercise": "Arnold Press", "value": "12 reps"},
+      ],
+      "Pull Day": [
+        {"exercise": "Pull-Ups", "value": "12 reps"},
+        {"exercise": "Rowing Machine", "value": "10 mins"},
+        {"exercise": "Cable Rows", "value": "15 reps"},
+      ],
+      "Leg Day": [
+        {"exercise": "Box Jumps", "value": "15 reps"},
+        {"exercise": "Jump Squats", "value": "20 reps"},
+        {"exercise": "Sled Push", "value": "30 sec"},
+      ],
+      "Core Day": [
+        {"exercise": "V-Ups", "value": "20 reps"},
+        {"exercise": "Hanging Leg Raises", "value": "15 reps"},
+        {"exercise": "Plank to Push-Up", "value": "15 reps"},
+      ],
+    },
   },
-
-  "Intermediate": {
-    "Push Day": [
-      {"exercise": "Battle Rope Waves", "value": "30 sec"},
-      {"exercise": "Push-Ups", "value": "15 reps"},
-      {"exercise": "Dumbbell Punches", "value": "30 sec"},
-    ],
-    "Pull Day": [
-      {"exercise": "Jump Rope", "value": "3 mins"},
-      {"exercise": "Bent Over Rows", "value": "12 reps"},
-      {"exercise": "Resistance Band Pulls", "value": "15 reps"},
-    ],
-    "Leg Day": [
-      {"exercise": "Jump Lunges", "value": "12 reps"},
-      {"exercise": "Box Step-Ups", "value": "15 reps"},
-      {"exercise": "Wall Sit", "value": "45 sec"},
-    ],
-    "Core Day": [
-      {"exercise": "Bicycle Crunches", "value": "20 reps"},
-      {"exercise": "Plank Jacks", "value": "20 reps"},
-      {"exercise": "Mountain Climbers", "value": "30 sec"},
-    ],
+  "general-wellness": {
+    "Beginner": {
+      "Push Day": [
+        {"exercise": "Wall Push-Ups", "value": "12 reps"},
+        {"exercise": "Arm Circles", "value": "30 sec"},
+        {"exercise": "Shoulder Mobility Stretch", "value": "1 min"},
+      ],
+      "Pull Day": [
+        {"exercise": "Band Pull Aparts", "value": "15 reps"},
+        {"exercise": "Light Resistance Rows", "value": "12 reps"},
+        {"exercise": "Superman Hold", "value": "20 sec"},
+      ],
+      "Leg Day": [
+        {"exercise": "Bodyweight Squats", "value": "15 reps"},
+        {"exercise": "Calf Raises", "value": "20 reps"},
+        {"exercise": "Hip Openers Stretch", "value": "1 min"},
+      ],
+      "Core Day": [
+        {"exercise": "Bird Dogs", "value": "12 reps"},
+        {"exercise": "Heel Touches", "value": "15 reps"},
+        {"exercise": "Plank", "value": "20 sec"},
+      ],
+    },
+    "Intermediate": {
+      "Push Day": [
+        {"exercise": "Push-Ups", "value": "15 reps"},
+        {"exercise": "Dumbbell Shoulder Press", "value": "12 reps"},
+        {"exercise": "Arm Circles", "value": "45 sec"},
+      ],
+      "Pull Day": [
+        {"exercise": "Dumbbell Rows", "value": "12 reps"},
+        {"exercise": "Resistance Band Pulls", "value": "15 reps"},
+        {"exercise": "Face Pulls", "value": "12 reps"},
+      ],
+      "Leg Day": [
+        {"exercise": "Goblet Squats", "value": "12 reps"},
+        {"exercise": "Walking Lunges", "value": "15 reps"},
+        {"exercise": "Glute Bridges", "value": "15 reps"},
+      ],
+      "Core Day": [
+        {"exercise": "Russian Twists", "value": "20 reps"},
+        {"exercise": "Leg Raises", "value": "12 reps"},
+        {"exercise": "Plank", "value": "45 sec"},
+      ],
+    },
+    "Advanced": {
+      "Push Day": [
+        {"exercise": "Incline Bench Press", "value": "10 reps"},
+        {"exercise": "Arnold Press", "value": "12 reps"},
+        {"exercise": "Weighted Push-Ups", "value": "15 reps"},
+      ],
+      "Pull Day": [
+        {"exercise": "Pull-Ups", "value": "12 reps"},
+        {"exercise": "Barbell Rows", "value": "10 reps"},
+        {"exercise": "Cable Face Pulls", "value": "15 reps"},
+      ],
+      "Leg Day": [
+        {"exercise": "Deadlifts", "value": "10 reps"},
+        {"exercise": "Bulgarian Split Squats", "value": "12 reps"},
+        {"exercise": "Box Jumps", "value": "15 reps"},
+      ],
+      "Core Day": [
+        {"exercise": "Hanging Leg Raises", "value": "15 reps"},
+        {"exercise": "Weighted Russian Twists", "value": "30 reps"},
+        {"exercise": "Plank to Push-Up", "value": "15 reps"},
+      ],
+    },
   },
-
-  "Advanced": {
-    "Push Day": [
-      {"exercise": "Plyo Push-Ups", "value": "15 reps"},
-      {"exercise": "Battle Rope Slams", "value": "45 sec"},
-      {"exercise": "Arnold Press", "value": "12 reps"},
-    ],
-    "Pull Day": [
-      {"exercise": "Pull-Ups", "value": "12 reps"},
-      {"exercise": "Rowing Machine", "value": "10 mins"},
-      {"exercise": "Cable Rows", "value": "15 reps"},
-    ],
-    "Leg Day": [
-      {"exercise": "Box Jumps", "value": "15 reps"},
-      {"exercise": "Jump Squats", "value": "20 reps"},
-      {"exercise": "Sled Push", "value": "30 sec"},
-    ],
-    "Core Day": [
-      {"exercise": "V-Ups", "value": "20 reps"},
-      {"exercise": "Hanging Leg Raises", "value": "15 reps"},
-      {"exercise": "Plank to Push-Up", "value": "15 reps"},
-    ],
-  },
-},
-
-"general-wellness": {
-  "Beginner": {
-    "Push Day": [
-      {"exercise": "Wall Push-Ups", "value": "12 reps"},
-      {"exercise": "Arm Circles", "value": "30 sec"},
-      {"exercise": "Shoulder Mobility Stretch", "value": "1 min"},
-    ],
-    "Pull Day": [
-      {"exercise": "Band Pull Aparts", "value": "15 reps"},
-      {"exercise": "Light Resistance Rows", "value": "12 reps"},
-      {"exercise": "Superman Hold", "value": "20 sec"},
-    ],
-    "Leg Day": [
-      {"exercise": "Bodyweight Squats", "value": "15 reps"},
-      {"exercise": "Calf Raises", "value": "20 reps"},
-      {"exercise": "Hip Openers Stretch", "value": "1 min"},
-    ],
-    "Core Day": [
-      {"exercise": "Bird Dogs", "value": "12 reps"},
-      {"exercise": "Heel Touches", "value": "15 reps"},
-      {"exercise": "Plank", "value": "20 sec"},
-    ],
-  },
-
-  "Intermediate": {
-    "Push Day": [
-      {"exercise": "Push-Ups", "value": "15 reps"},
-      {"exercise": "Dumbbell Shoulder Press", "value": "12 reps"},
-      {"exercise": "Arm Circles", "value": "45 sec"},
-    ],
-    "Pull Day": [
-      {"exercise": "Dumbbell Rows", "value": "12 reps"},
-      {"exercise": "Resistance Band Pulls", "value": "15 reps"},
-      {"exercise": "Face Pulls", "value": "12 reps"},
-    ],
-    "Leg Day": [
-      {"exercise": "Goblet Squats", "value": "12 reps"},
-      {"exercise": "Walking Lunges", "value": "15 reps"},
-      {"exercise": "Glute Bridges", "value": "15 reps"},
-    ],
-    "Core Day": [
-      {"exercise": "Russian Twists", "value": "20 reps"},
-      {"exercise": "Leg Raises", "value": "12 reps"},
-      {"exercise": "Plank", "value": "45 sec"},
-    ],
-  },
-
-  "Advanced": {
-    "Push Day": [
-      {"exercise": "Incline Bench Press", "value": "10 reps"},
-      {"exercise": "Arnold Press", "value": "12 reps"},
-      {"exercise": "Weighted Push-Ups", "value": "15 reps"},
-    ],
-    "Pull Day": [
-      {"exercise": "Pull-Ups", "value": "12 reps"},
-      {"exercise": "Barbell Rows", "value": "10 reps"},
-      {"exercise": "Cable Face Pulls", "value": "15 reps"},
-    ],
-    "Leg Day": [
-      {"exercise": "Deadlifts", "value": "10 reps"},
-      {"exercise": "Bulgarian Split Squats", "value": "12 reps"},
-      {"exercise": "Box Jumps", "value": "15 reps"},
-    ],
-    "Core Day": [
-      {"exercise": "Hanging Leg Raises", "value": "15 reps"},
-      {"exercise": "Weighted Russian Twists", "value": "30 reps"},
-      {"exercise": "Plank to Push-Up", "value": "15 reps"},
-    ],
-  },
-},
-
 };

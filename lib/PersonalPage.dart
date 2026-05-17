@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'homepage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfile {
   String? gender;
@@ -35,7 +36,7 @@ class UserProfile {
       case '5-15':
         return 'Intermediate';
       case '15+':
-        return 'Advance';
+        return 'Advanced';
       default:
         return 'Beginner';
     }
@@ -61,21 +62,38 @@ class _PersonalizeState extends State<Personalize> {
         curve: Curves.easeInOut,
       );
     } else {
-      final prefs = await SharedPreferences.getInstance();
+      try {
+        final uid = FirebaseAuth.instance.currentUser!.uid;
 
-      await prefs.setString('level', _profile.mappedLevel);
-      await prefs.setString('goal', _profile.mappedGoal);
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'gender': _profile.gender,
+          'goal': _profile.goal,
+          'pushupBaseline': _profile.pushupBaseline,
+          'activityLevel': _profile.activityLevel,
+          'height': _profile.height,
+          'weight': _profile.weight,
+          'frequency': _profile.frequency,
+          'level': _profile.mappedLevel,
+          'goalMapped': _profile.mappedGoal,
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
 
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Homepage(
-            level: _profile.mappedLevel,
-goal: _profile.goal!,
+        if (!mounted) return;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Homepage(
+              level: _profile.mappedLevel,
+              goal: _profile.goal ?? 'general-wellness',
+            ),
           ),
-        ),
-      );
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to save profile: $e")),
+        );
+      }
     }
   }
 
@@ -91,11 +109,11 @@ goal: _profile.goal!,
   Widget _buildProgressIndicator() {
     return Row(
       children: List.generate(
-        7,
+        6,
         (index) => Expanded(
           child: Container(
             height: 8,
-            margin: EdgeInsets.only(right: index < 6 ? 8 : 0),
+            margin: EdgeInsets.only(right: index < 5 ? 8 : 0),
             decoration: BoxDecoration(
               color: index <= _currentPage
                   ? const Color(0xFF2563EB)
@@ -111,7 +129,7 @@ goal: _profile.goal!,
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromARGB(255, 63, 63, 63),
       body: SafeArea(
         child: PageView(
           controller: _pageController,
@@ -662,211 +680,207 @@ goal: _profile.goal!,
       ),
     );
   }
+
   double? _bmi;
-String _bmiCategory = '';
-Color _bmiColor = Colors.grey;
-String _bmiAdvice = '';
+  String _bmiCategory = '';
+  Color _bmiColor = Colors.grey;
+  String _bmiAdvice = '';
 
-String? _heightInput;
-String? _recommendedLevel;
+  String? _heightInput;
+  String? _recommendedLevel;
 
-bool get _isLevelValid {
-  if (_recommendedLevel == null) return true;
-  return _profile.bmiRecommendedLevel == _recommendedLevel;
-}
-
-void _computeBMI() {
-  if (_heightInput == null || _profile.weight == null) return;
-
-  final input = _heightInput!.trim();
-  final parts = input.split(RegExp(r"[^\d]+"));
-
-  if (parts.isEmpty) return;
-
-  int feet = int.tryParse(parts[0]) ?? 0;
-  int inches = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
-
-  if (feet == 0) return;
-
-  double heightCm = (feet * 30.48) + (inches * 2.54);
-  double weightKg = _profile.weight!;
-
-  final h = heightCm / 100;
-  final bmi = weightKg / (h * h);
-
-  String cat;
-  Color col;
-  String advice;
-  String? recommendedLevel;
-
-  if (bmi < 18.5) {
-    cat = 'Underweight';
-    col = const Color(0xFFFF9800);
-    advice = 'Focus on building strength. Beginner programs work best for you.';
-    recommendedLevel = 'Beginner';
-  } else if (bmi <= 24.9) {
-    cat = 'Normal Weight';
-    col = const Color(0xFF4CAF50);
-    advice = 'Great shape! Any level is suitable based on your fitness goal.';
-    recommendedLevel = null;
-  } else if (bmi <= 29.9) {
-    cat = 'Overweight';
-    col = const Color(0xFFFFC107);
-    advice = 'Cardio-focused workouts are recommended. Consider Intermediate.';
-    recommendedLevel = 'Intermediate';
-  } else {
-    cat = 'Obese';
-    col = const Color(0xFFF44336);
-    advice = 'Low-impact Beginner workouts are safest.';
-    recommendedLevel = 'Beginner';
+  bool get _isLevelValid {
+    if (_recommendedLevel == null) return true;
+    if (_profile.bmiRecommendedLevel == null) return false; // dagdag na ito
+    return _profile.bmiRecommendedLevel == _recommendedLevel;
   }
 
-  setState(() {
-    _bmi = bmi;
-    _bmiCategory = cat;
-    _bmiColor = col;
-    _bmiAdvice = advice;
-    _recommendedLevel = recommendedLevel;
+  void _computeBMI() {
+    if (_heightInput == null || _profile.weight == null) return;
 
-    // SINGLE SOURCE OF TRUTH
-    _profile.bmiRecommendedLevel ??= recommendedLevel;
+    final input = _heightInput!.trim();
+    final parts = input.split(RegExp(r"[^\d]+"));
+
+    if (parts.isEmpty) return;
+
+    int feet = int.tryParse(parts[0]) ?? 0;
+    int inches = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+
+    if (feet == 0) return;
+
+    double heightCm = (feet * 30.48) + (inches * 2.54);
+    double weightKg = _profile.weight!;
+
+    final h = heightCm / 100;
+    final bmi = weightKg / (h * h);
+
+    String cat;
+    Color col;
+    String advice;
+    String? recommendedLevel;
 
     if (bmi < 18.5) {
-      _profile.goal = 'build-muscle';
+      cat = 'Underweight';
+      col = const Color(0xFFFF9800);
+      advice =
+          'Focus on building strength. Beginner programs work best for you.';
+      recommendedLevel = 'Beginner';
     } else if (bmi <= 24.9) {
-      _profile.goal = _profile.goal ?? 'general-wellness';
+      cat = 'Normal Weight';
+      col = const Color(0xFF4CAF50);
+      advice = 'Great shape! Any level is suitable based on your fitness goal.';
+      recommendedLevel = null;
+    } else if (bmi <= 29.9) {
+      cat = 'Overweight';
+      col = const Color(0xFFFFC107);
+      advice =
+          'Cardio-focused workouts are recommended. Consider Intermediate.';
+      recommendedLevel = 'Intermediate';
     } else {
-      _profile.goal = 'lose-fat';
+      cat = 'Obese';
+      col = const Color(0xFFF44336);
+      advice = 'Low-impact Beginner workouts are safest.';
+      recommendedLevel = 'Beginner';
     }
-  });
-}
 
-Widget _buildBiometricsScreen() {
-  final bool canProceed = _heightInput != null &&
-      _profile.weight != null &&
-      _bmi != null &&
-      _isLevelValid;
+    setState(() {
+      _bmi = bmi;
+      _bmiCategory = cat;
+      _bmiColor = col;
+      _bmiAdvice = advice;
+      _recommendedLevel = recommendedLevel;
 
-  return Padding(
-    padding: const EdgeInsets.all(24.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildProgressIndicator(),
-        const SizedBox(height: 24),
-        const Text(
-          'Your Biometrics & BMI',
-          style: TextStyle(fontSize: 32, color: Colors.white),
-        ),
-        const SizedBox(height: 20),
+      _profile.bmiRecommendedLevel = null;
 
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+      if (bmi < 18.5) {
+        _profile.goal = 'build-muscle';
+      } else if (bmi <= 24.9) {
+        _profile.goal = _profile.goal ?? 'general-wellness';
+      } else {
+        _profile.goal = 'lose-fat';
+      }
+    });
+  }
 
-                const Text('Height (e.g. 5\'8)', style: TextStyle(color: Colors.white)),
-                const SizedBox(height: 8),
-                TextField(
-                  style: const TextStyle(color: Colors.white),
-                  decoration: _inputStyle("5'8 or 5 8"),
-                  onChanged: (v) {
-                    setState(() => _heightInput = v);
-                    _computeBMI();
-                  },
-                ),
+  Widget _buildBiometricsScreen() {
+    final bool canProceed = _heightInput != null &&
+        _profile.weight != null &&
+        _bmi != null &&
+        _isLevelValid;
 
-                const SizedBox(height: 20),
-
-                const Text('Weight (kg)', style: TextStyle(color: Colors.white)),
-                const SizedBox(height: 8),
-                TextField(
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  style: const TextStyle(color: Colors.white),
-                  decoration: _inputStyle('e.g. 70'),
-                  onChanged: (v) {
-                    setState(() => _profile.weight = double.tryParse(v));
-                    _computeBMI();
-                  },
-                ),
-
-                const SizedBox(height: 24),
-
-                if (_bmi != null)
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: _bmiColor.withOpacity(0.08),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: _bmiColor.withOpacity(0.5)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _bmiCategory,
-                          style: TextStyle(
-                            color: _bmiColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          _bmiAdvice,
-                          style: const TextStyle(color: Colors.white70),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        if (_recommendedLevel != null &&
-                            _profile.bmiRecommendedLevel != _recommendedLevel)
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.1),
-                              border: Border.all(color: Colors.red),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Your selected level is not suitable for your BMI.",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                                const SizedBox(height: 8),
-                                TextButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _profile.bmiRecommendedLevel =
-                                          _recommendedLevel;
-                                    });
-                                  },
-                                  child: const Text(
-                                    "Use Recommended Level",
-                                    style: TextStyle(color: Colors.blue),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildProgressIndicator(),
+          const SizedBox(height: 24),
+          const Text(
+            'Your Biometrics & BMI',
+            style: TextStyle(fontSize: 32, color: Colors.white),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Height (e.g. 5\'8)',
+                      style: TextStyle(color: Colors.white)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    style: const TextStyle(color: Colors.white),
+                    decoration: _inputStyle("5'8 or 5 8"),
+                    onChanged: (v) {
+                      setState(() => _heightInput = v);
+                      _computeBMI();
+                    },
                   ),
-
-                const SizedBox(height: 12),
-
-                _buildNavigationButtons(canProceed),
-              ],
+                  const SizedBox(height: 20),
+                  const Text('Weight (kg)',
+                      style: TextStyle(color: Colors.white)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    style: const TextStyle(color: Colors.white),
+                    decoration: _inputStyle('e.g. 70'),
+                    onChanged: (v) {
+                      setState(() => _profile.weight = double.tryParse(v));
+                      _computeBMI();
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  if (_bmi != null)
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: _bmiColor.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: _bmiColor.withOpacity(0.5)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _bmiCategory,
+                            style: TextStyle(
+                              color: _bmiColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            _bmiAdvice,
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                          const SizedBox(height: 12),
+                          if (_recommendedLevel != null &&
+                              _profile.bmiRecommendedLevel != _recommendedLevel)
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.1),
+                                border: Border.all(color: Colors.red),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Your selected level is not suitable for your BMI.",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _profile.bmiRecommendedLevel =
+                                            _recommendedLevel;
+                                      });
+                                    },
+                                    child: const Text(
+                                      "Use Recommended Level",
+                                      style: TextStyle(color: Colors.blue),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 12),
+                  _buildNavigationButtons(canProceed),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   InputDecoration _inputStyle(String hint) {
     return InputDecoration(

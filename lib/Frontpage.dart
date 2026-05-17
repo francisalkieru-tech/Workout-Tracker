@@ -10,17 +10,17 @@ class FrontPage extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-
           Image.asset(
             "assets/38d70711789e7380cc4616afb6419918.jpg",
             fit: BoxFit.cover,
           ),
-
           Container(
             color: Colors.black.withOpacity(0.5),
           ),
-           Positioned(
-            top: 60, left: 0, right: 0,
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
             child: const Text(
               "Workout Tracker",
               textAlign: TextAlign.center,
@@ -32,23 +32,11 @@ class FrontPage extends StatelessWidget {
               ),
             ),
           ),
-          
           Padding(
             padding: const EdgeInsets.fromLTRB(30, 80, 30, 40),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "Get Fit not Fat",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 34,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-
                 const Spacer(flex: 1),
                 const Text(
                   "Push Your Limits",
@@ -59,9 +47,7 @@ class FrontPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
                 SizedBox(
                   width: double.infinity,
                   height: 65,
@@ -72,8 +58,10 @@ class FrontPage extends StatelessWidget {
                       elevation: 5,
                     ),
                     onPressed: () {
-                      Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const UserLog()),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const UserLog()),
                       );
                     },
                     child: Ink(
@@ -91,7 +79,11 @@ class FrontPage extends StatelessWidget {
                       child: const Center(
                         child: Text(
                           "Get Started",
-                          style: TextStyle(fontSize: 18, fontWeight: .w600, color: Colors.white,),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),

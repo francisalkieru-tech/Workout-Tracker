@@ -1,8 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'personalpage.dart';
 import 'loginpage.dart';
+import 'package:flutter/gestures.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -16,10 +18,70 @@ class _SignupPageState extends State<SignupPage> {
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   bool obscurePassword = true;
   bool obscureConfirm = true;
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> signup() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Passwords do not match")),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      final userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      final user = userCredential.user;
+
+      if (user != null) {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': emailController.text.trim(),
+          'username': emailController.text.trim().split('@').first,
+          'level': 'Beginner',
+          'goal': 'general-wellness',
+          'weight': 70.0,
+          'height': 170.0,
+          'total_workouts': 0,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Personalize()),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "Signup failed")),
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
 
   bool isValidEmail(String email) {
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
@@ -31,38 +93,19 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  void signup() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Personalize()),
-      );
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // BACKGROUND
           Container(
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF0A1F44), Color(0xFF0D2A66)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+              image: DecorationImage(
+                image:
+                    AssetImage("assets/38d70711789e7380cc4616afb6419918.jpg"),
+                fit: BoxFit.cover,
               ),
             ),
           ),
-
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -90,7 +133,6 @@ class _SignupPageState extends State<SignupPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-
                           const SizedBox(height: 30),
 
                           TextFormField(
@@ -107,10 +149,8 @@ class _SignupPageState extends State<SignupPage> {
                               return null;
                             },
                           ),
-
                           const SizedBox(height: 15),
 
-                          // PASSWORD
                           TextFormField(
                             controller: passwordController,
                             obscureText: obscurePassword,
@@ -123,11 +163,8 @@ class _SignupPageState extends State<SignupPage> {
                                       : Icons.visibility_off,
                                   color: Colors.white70,
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    obscurePassword = !obscurePassword;
-                                  });
-                                },
+                                onPressed: () => setState(
+                                    () => obscurePassword = !obscurePassword),
                               ),
                             ),
                             validator: (value) {
@@ -140,15 +177,14 @@ class _SignupPageState extends State<SignupPage> {
                               return null;
                             },
                           ),
-
                           const SizedBox(height: 15),
 
-                          // CONFIRM PASSWORD
                           TextFormField(
                             controller: confirmPasswordController,
                             obscureText: obscureConfirm,
                             style: const TextStyle(color: Colors.white),
-                            decoration: _inputDecoration("Confirm Password").copyWith(
+                            decoration:
+                                _inputDecoration("Confirm Password").copyWith(
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   obscureConfirm
@@ -156,11 +192,8 @@ class _SignupPageState extends State<SignupPage> {
                                       : Icons.visibility_off,
                                   color: Colors.white70,
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    obscureConfirm = !obscureConfirm;
-                                  });
-                                },
+                                onPressed: () => setState(
+                                    () => obscureConfirm = !obscureConfirm),
                               ),
                             ),
                             validator: (value) {
@@ -170,28 +203,37 @@ class _SignupPageState extends State<SignupPage> {
                               return null;
                             },
                           ),
-
                           const SizedBox(height: 25),
 
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: signup,
+                              onPressed: isLoading ? null : signup,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: const Color(0xFF0D2A66),
-                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                              child: const Text(
-                                "SIGN UP",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
+                              child: isLoading
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Color(0xFF0D2A66),
+                                      ),
+                                    )
+                                  : const Text(
+                                      "SIGN UP",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                             ),
                           ),
-
                           const SizedBox(height: 20),
 
                           RichText(
@@ -211,7 +253,8 @@ class _SignupPageState extends State<SignupPage> {
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const LoginPage(),
+                                          builder: (context) =>
+                                              const LoginPage(),
                                         ),
                                       );
                                     },
@@ -229,14 +272,6 @@ class _SignupPageState extends State<SignupPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _circle(double size, Color color) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: color),
     );
   }
 

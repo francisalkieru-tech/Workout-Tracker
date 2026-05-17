@@ -2,8 +2,20 @@ import 'package:flutter/material.dart';
 import 'frontpage.dart';
 import 'personalPage.dart';
 import 'userlog.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    // Firebase already ensureInitialized
+  }
+
   runApp(const ExerciseApp());
 }
 
@@ -16,6 +28,7 @@ class ExerciseApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Exercise App',
       theme: ThemeData.dark(),
+      scrollBehavior: const ScrollBehavior().copyWith(overscroll: false),
       initialRoute: '/Front',
       routes: {
         '/signup': (context) => const UserLog(),

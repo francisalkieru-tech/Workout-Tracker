@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lottie/lottie.dart';
 import 'listpage.dart';
 import 'workout.dart';
 import 'suggestedworkout.dart';
+import 'profilepage.dart';
 
 class Homepage extends StatefulWidget {
   final String level;
@@ -18,6 +22,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  int _selectedTab = 0;
   final List<String> sessions = [
     "Push Day",
     "Pull Day",
@@ -40,13 +45,10 @@ class _HomepageState extends State<Homepage> {
   @override
   void initState() {
     super.initState();
-
     progress = {
-      "Push Day": 0,
-      "Pull Day": 0,
-      "Leg Day": 0,
-      "Core Day": 0,
+      for (var s in sessions) s: 0.0,
     };
+    loadProgress();
   }
 
   String getTodayWorkout() {
@@ -56,59 +58,110 @@ class _HomepageState extends State<Homepage> {
 
   List<Map<String, dynamic>> getWorkout(String sessionName) {
     final goalData = workoutData[widget.goal];
-    if (goalData == null) {
+    if (goalData is! Map)
       return [
-        {"exercise": "No Goal Found", "value": ""}
+        {"exercise": "Invalid Goal", "value": ""}
       ];
-    }
 
     final levelData = goalData[widget.level];
-    if (levelData == null) {
+    if (levelData is! Map)
       return [
-        {"exercise": "No Level Found", "value": ""}
+        {"exercise": "Invalid Level", "value": ""}
       ];
-    }
 
     final sessionData = levelData[sessionName];
-    if (sessionData == null) {
+    if (sessionData is! List)
       return [
         {"exercise": "Rest Day", "value": "Take rest"}
       ];
-    }
 
-    return List<Map<String, dynamic>>.from(sessionData);
+    return sessionData.map((e) => Map<String, dynamic>.from(e)).toList();
   }
 
-  List<Map<String, dynamic>> getSuggestedWorkout(String category) {
+  List<Map<String, dynamic>> getSuggestedWorkout() {
     final goalData = suggestedWorkouts[widget.goal];
-    if (goalData == null) return [];
+    if (goalData is! Map) return [];
 
     final levelData = goalData[widget.level];
-    if (levelData == null) return [];
+    if (levelData is! List) return [];
 
-    final categoryData = levelData[category];
-    if (categoryData == null) return [];
+    return List<Map<String, dynamic>>.from(levelData);
+  }
 
-    return List<Map<String, dynamic>>.from(categoryData);
+  String getWeekId() {
+    final now = DateTime.now();
+    final weekOfYear =
+        ((now.difference(DateTime(now.year, 1, 1)).inDays) / 7).floor();
+    return "${now.year}-W$weekOfYear";
+  }
+
+  Future<void> saveProgress(String session, double value) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final weekId = getWeekId();
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('weekly_progress')
+        .doc(weekId)
+        .collection('sessions')
+        .doc(session)
+        .set({
+      'value': value,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> loadProgress() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final weekId = getWeekId();
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('weekly_progress')
+        .doc(weekId)
+        .collection('sessions')
+        .get();
+
+    final data = {for (var d in snapshot.docs) d.id: d.data()};
+
+    setState(() {
+      for (var s in sessions) {
+        progress[s] = (data[s]?['value'] ?? 0).toDouble();
+      }
+    });
+  }
+
+  Future<void> logWorkout() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final today = DateTime.now();
+    final dateKey = "${today.year}-${today.month}-${today.day}";
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('workouts')
+        .doc(dateKey)
+        .set({"date": Timestamp.now()});
   }
 
   Widget workoutCard(String title) {
     return Container(
       margin: const EdgeInsets.only(bottom: 18),
-
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 20,
-      ),
-
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.55),
         borderRadius: BorderRadius.circular(30),
       ),
-
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
         children: [
           Text(
             title,
@@ -118,7 +171,6 @@ class _HomepageState extends State<Homepage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           GestureDetector(
             onTap: () async {
               final result = await Navigator.push(
@@ -127,6 +179,7 @@ class _HomepageState extends State<Homepage> {
                   builder: (context) => ListPage(
                     title: title,
                     exercises: getWorkout(title),
+                    suggested: getSuggestedWorkout(),
                   ),
                 ),
               );
@@ -135,17 +188,16 @@ class _HomepageState extends State<Homepage> {
                 setState(() {
                   progress[title] = result;
                 });
+                await saveProgress(title, result);
+                await logWorkout();
               }
             },
-
             child: Container(
               padding: const EdgeInsets.all(8),
-
               decoration: const BoxDecoration(
                 color: Colors.black54,
                 shape: BoxShape.circle,
               ),
-
               child: const Icon(
                 Icons.add,
                 color: Color.fromARGB(255, 0, 255, 255),
@@ -160,133 +212,42 @@ class _HomepageState extends State<Homepage> {
   Widget dashboard() {
     return Container(
       margin: const EdgeInsets.only(top: 20),
-
       padding: const EdgeInsets.all(20),
-
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.55),
         borderRadius: BorderRadius.circular(25),
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
           const Text(
-            "Today's Progress",
+            "This Week Progress",
             style: TextStyle(
               color: Color.fromARGB(255, 0, 229, 255),
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 15),
-
           ...sessions.map((s) {
             double value = progress[s] ?? 0;
-
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-
                 children: [
-                  Text(
-                    s,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                    ),
-                  ),
-
+                  Text(s, style: const TextStyle(color: Colors.white70)),
                   const SizedBox(height: 5),
-
                   LinearProgressIndicator(
                     value: value,
                     backgroundColor: Colors.white12,
                     color: Colors.blue,
                     minHeight: 10,
                   ),
-
                   const SizedBox(height: 5),
-
                   Text(
                     "${(value * 100).toInt()}%",
-                    style: const TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ],
-      ),
-    );
-  }
-
-  Widget suggestedWorkoutSection() {
-    final suggestions = getSuggestedWorkout("Full Body");
-
-    if (suggestions.isEmpty) {
-      return const SizedBox();
-    }
-
-    return Container(
-      margin: const EdgeInsets.only(top: 20),
-
-      padding: const EdgeInsets.all(20),
-
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.55),
-        borderRadius: BorderRadius.circular(25),
-      ),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-          const Text(
-            "Suggested Workouts",
-            style: TextStyle(
-              color: Colors.cyan,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          const SizedBox(height: 15),
-
-          ...suggestions.map((workout) {
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-
-              padding: const EdgeInsets.all(15),
-
-              decoration: BoxDecoration(
-                color: Colors.white10,
-                borderRadius: BorderRadius.circular(15),
-              ),
-
-              child: Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.spaceBetween,
-
-                children: [
-                  Text(
-                    workout["exercise"],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-
-                  Text(
-                    workout["value"],
-                    style: const TextStyle(
-                      color: Colors.white70,
-                    ),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
               ),
@@ -305,47 +266,32 @@ class _HomepageState extends State<Homepage> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                  "assets/64d8e4a09654aded67cf7975db1e1eda.jpg",
-                ),
+                image:
+                    AssetImage("assets/64d8e4a09654aded67cf7975db1e1eda.jpg"),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-
-          Container(
-            color: Colors.black.withOpacity(0.5),
-          ),
-
+          Container(color: Colors.black.withOpacity(0.5)),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(20),
-
               child: Column(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(20),
-
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.55),
                       borderRadius: BorderRadius.circular(25),
                     ),
-
                     child: Row(
                       children: [
-                        Image.asset(
-                          "assets/12155872.png",
-                          width: 70,
-                          height: 70,
-                        ),
-
+                        Image.asset("assets/12155872.png",
+                            width: 70, height: 70),
                         const SizedBox(width: 15),
-
                         Expanded(
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
-
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
                                 "WORKOUT TODAY",
@@ -355,28 +301,18 @@ class _HomepageState extends State<Homepage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-
                               const SizedBox(height: 10),
-
                               Text(
                                 "Session Today: ${getTodayWorkout()}",
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                ),
+                                style: const TextStyle(color: Colors.white70),
                               ),
-
                               Text(
                                 "Level: ${widget.level}",
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                ),
+                                style: const TextStyle(color: Colors.white70),
                               ),
-
                               Text(
                                 "Goal: ${widget.goal}",
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                ),
+                                style: const TextStyle(color: Colors.white70),
                               ),
                             ],
                           ),
@@ -384,23 +320,58 @@ class _HomepageState extends State<Homepage> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   Expanded(
                     child: ListView(
                       children: [
                         ...sessions.map(workoutCard).toList(),
-
                         dashboard(),
-
-                        suggestedWorkoutSection(),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedTab,
+        onTap: (i) {
+          setState(() => _selectedTab = i);
+          if (i == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfilePage(
+                  level: widget.level,
+                  goal: widget.goal,
+                ),
+              ),
+            );
+          }
+        },
+        backgroundColor: Colors.black,
+        selectedItemColor: const Color(0xFF00E5FF),
+        unselectedItemColor: Colors.white38,
+        items: [
+          BottomNavigationBarItem(
+            icon: Lottie.asset(
+              'assets/system-regular-41-home-hover-pinch.json',
+              width: 28,
+              height: 28,
+              repeat: false,
+            ),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Lottie.asset(
+              'assets/wired-gradient-21-avatar-hover-jumping.json',
+              width: 28,
+              height: 28,
+              repeat: false,
+            ),
+            label: 'Profile',
           ),
         ],
       ),

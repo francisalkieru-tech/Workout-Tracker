@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'loginpage.dart';
 import 'signuppage.dart';
 
@@ -17,31 +18,15 @@ class UserLog extends StatelessWidget {
       child: Scaffold(
         body: Stack(
           children: [
-
             Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF0A1F44),
-                    Color(0xFF0D2A66),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+                image: DecorationImage(
+                  image:
+                      AssetImage("assets/38d70711789e7380cc4616afb6419918.jpg"),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-
-            Positioned(
-              top: -60,
-              left: -60,
-              child: _circle(200, Colors.white.withOpacity(0.1)),
-            ),
-            Positioned(
-              bottom: 80,
-              right: -40,
-              child: _circle(150, Colors.cyanAccent.withOpacity(0.2)),
-            ),
-
             Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -62,26 +47,21 @@ class UserLog extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-
-                          const Icon(
-                            Icons.fitness_center,
-                            color: Colors.white,
-                            size: 40,
+                          Lottie.asset(
+                            'assets/wired-outline-1764-pushups-hover-pinch.json',
+                            width: 120,
+                            height: 120,
+                            repeat: true,
                           ),
-
-                          const SizedBox(height: 10),
-
                           const Text(
                             "Workout Tracker",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color.fromARGB(255, 1, 154, 255),
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-
-                          const SizedBox(height: 40),
-
+                          const SizedBox(height: 30),
                           const Text(
                             "Welcome",
                             style: TextStyle(
@@ -90,9 +70,7 @@ class UserLog extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-
                           const SizedBox(height: 40),
-
                           SizedBox(
                             width: double.infinity,
                             height: 50,
@@ -108,7 +86,8 @@ class UserLog extends StatelessWidget {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                foregroundColor: const Color(0xFF0D2A66),
+                                foregroundColor:
+                                    const Color.fromARGB(255, 0, 234, 255),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(25),
                                 ),
@@ -119,9 +98,7 @@ class UserLog extends StatelessWidget {
                               ),
                             ),
                           ),
-
                           const SizedBox(height: 15),
-
                           SizedBox(
                             width: double.infinity,
                             height: 50,
@@ -136,7 +113,8 @@ class UserLog extends StatelessWidget {
                                 );
                               },
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.white),
+                                side: const BorderSide(
+                                    color: Color.fromARGB(255, 0, 242, 255)),
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(25),
@@ -148,26 +126,7 @@ class UserLog extends StatelessWidget {
                               ),
                             ),
                           ),
-
-                          const SizedBox(height: 30),
-
-                          const Text(
-                            "Continue with",
-                            style: TextStyle(color: Colors.white70),
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _social(Icons.facebook, Colors.blue),
-                              const SizedBox(width: 15),
-                              _social(Icons.g_mobiledata, Colors.red),
-                              const SizedBox(width: 15),
-                              _social(Icons.apple, Colors.white),
-                            ],
-                          ),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     ),
@@ -178,28 +137,6 @@ class UserLog extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _circle(double size, Color color) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: color,
-      ),
-    );
-  }
-
-  Widget _social(IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white24),
-      ),
-      child: Icon(icon, color: color),
     );
   }
 }

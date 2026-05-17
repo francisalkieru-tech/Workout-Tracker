@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'homepage.dart';
 import 'personalpage.dart';
 import 'signuppage.dart';
@@ -23,75 +24,41 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   bool _obscurePassword = true;
 
-  void _forgotPassword() {
-    final TextEditingController resetController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Reset Password"),
-          content: TextField(
-            controller: resetController,
-            decoration: const InputDecoration(
-              hintText: "Enter your email",
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                String email = resetController.text.trim();
-
-                if (email.isEmpty || !email.contains("@")) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Enter valid email")),
-                  );
-                  return;
-                }
-
-                await Future.delayed(const Duration(seconds: 1));
-
-                if (!mounted) return;
-
-                Navigator.pop(context);
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Password reset link sent to your email"),
-                  ),
-                );
-              },
-              child: const Text("Send"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      await Future.delayed(const Duration(seconds: 1));
+      UserCredential userCred =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-      final prefs = await SharedPreferences.getInstance();
-      String? level = prefs.getString('level');
-      String? goal = prefs.getString('goal');
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCred.user!.uid)
+          .get();
 
+      final data = userDoc.data();
+      final map = data is Map<String, dynamic> ? data : null;
+
+      String username = map?['username'] ?? "User";
+      String email = map?['email'] ?? emailController.text.trim();
       if (!mounted) return;
 
-      if (level != null && goal != null) {
+      String level = map?['level'] ?? 'Beginner';
+      String goal = map?['goal'] ?? 'general-wellness';
+
+      if (userDoc.exists && map != null) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => Homepage(level: level, goal: goal, ),
+            builder: (context) => Homepage(
+              level: level,
+              goal: goal,
+            ),
           ),
         );
       } else {
@@ -102,9 +69,9 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       }
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login failed: $e")),
+        SnackBar(content: Text(e.message ?? "Login failed")),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -117,15 +84,12 @@ class _LoginPageState extends State<LoginPage> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF0F2246), Color(0xFF1E3C72)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/38d70711789e7380cc4616afb6419918.jpg"),
+              fit: BoxFit.cover,
             ),
-          ),
-
+          )),
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -142,7 +106,6 @@ class _LoginPageState extends State<LoginPage> {
                         color: Colors.white.withOpacity(0.2),
                       ),
                     ),
-
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -156,9 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-
                           const SizedBox(height: 30),
-
                           _inputField(
                             controller: emailController,
                             hint: "Email",
@@ -173,9 +134,7 @@ class _LoginPageState extends State<LoginPage> {
                               return null;
                             },
                           ),
-
                           const SizedBox(height: 20),
-
                           _inputField(
                             controller: passwordController,
                             hint: "Password",
@@ -197,33 +156,15 @@ class _LoginPageState extends State<LoginPage> {
                               return null;
                             },
                           ),
-
                           const SizedBox(height: 10),
-
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: GestureDetector(
-                              onTap: _forgotPassword,
-                              child: const Text(
-                                "Forgot Password?",
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 20),
-
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: const Color(0xFF1E3C72),
-                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
@@ -240,9 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ),
                             ),
                           ),
-
                           const SizedBox(height: 20),
-
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(

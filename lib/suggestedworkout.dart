@@ -16,7 +16,6 @@ final Map<String, dynamic> suggestedWorkouts = {
       {"exercise": "Assault Bike", "value": "10 mins"},
     ],
   },
-
   "build-muscle": {
     "Beginner": [
       {"exercise": "Farmer Carry", "value": "1 min"},
@@ -34,7 +33,6 @@ final Map<String, dynamic> suggestedWorkouts = {
       {"exercise": "Heavy Deadlifts", "value": "5 reps"},
     ],
   },
-
   "cardio-health": {
     "Beginner": [
       {"exercise": "Fast Walking", "value": "20 mins"},
@@ -49,7 +47,6 @@ final Map<String, dynamic> suggestedWorkouts = {
       {"exercise": "Rowing Machine", "value": "15 mins"},
     ],
   },
-
   "general-wellness": {
     "Beginner": [
       {"exercise": "Morning Walk", "value": "15 mins"},

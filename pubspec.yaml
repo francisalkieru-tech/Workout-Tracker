@@ -30,11 +30,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  lottie: ^3.1.0 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   shared_preferences: ^2.2.3
   cupertino_icons: ^1.0.8
+  firebase_core: ^3.15.2
+  firebase_auth: ^5.7.0       # for login/register
+  cloud_firestore: ^5.6.12     # for database (user profile, workouts)
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +61,9 @@ flutter:
     - assets/38d70711789e7380cc4616afb6419918.jpg
     - assets/image.png
     - assets/12155872.png
+    - assets/system-regular-41-home-hover-pinch.json 
+    - assets/wired-gradient-21-avatar-hover-jumping.json
+    - assets/wired-outline-1764-pushups-hover-pinch.json
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
