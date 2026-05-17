@@ -175,7 +175,8 @@ class _HomepageState extends State<Homepage> {
                 MaterialPageRoute(
                   builder: (context) => ListPage(
                     title: title,
-                    
+                    exercises: getWorkout(title),
+                    suggested: getSuggestedWorkout(), 
                   ),
                 ),
               );
